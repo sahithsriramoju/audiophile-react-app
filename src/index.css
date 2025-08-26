@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme{
+  --color-dark-brown: #D87D4A;
+  --color-black-1 : #101010;
+  --color-grey-1 : #F1F1F1;
+  --color-grey-2: #FAFAFA;
+  --color-light-brown : #FBAF85;
+  --color-white: #FFFFFF;
+  --color-black-2:#000000;
+  --color-content:#979797;
+  --color-background:rgb(0,0,0,0.5);
+  --color-input-warning: oklch(0.637 0.237 25.331);
+
+  --font-manrope : "Manrope";
+
+  --text-xs: '13px';
+  --text-xs--line-height:'25px';
+  --text-xs--letter-spacing: '2px';
+  --text-sm: '14px';
+  --text-sm--letter-spacing:'10px';
+  --text-sm--line-height:'19px';
+  --text-base: '15px';
+  --text-base--letter-spacing:'1.02px';
+  --text-base--line-height:'25px';
+  --text-lg: '18px';
+  --text-lg--letter-spacing: '1.3px';
+  --text-lg--line-height:'24px';
+  --text-xl:'24px';
+  --text-xl--letter-spacing:'1.7px';
+  --text-xl--line-height:'28px';
+  --text-2xl:'28px';
+  --text-2xl--letter-spacing:'2px';
+  --text-2xl--line-height:'38px';
+  --text-3xl:'32px';
+  --text-3xl--letter-spacing:'1.15px';
+  --text-3xl--line-height:'36px';
+  --text-4xl:'40px';
+  --text-4xl--letter-spacing:'1.5px';
+  --text-4xl--line-height:'44px';
+  --text-5xl:'56px';
+  --text-5xl--letter-spacing:'2px';
+  --text-5xl--line-height:'58px';
+
+  --animate-bubble: bubble 1s infinite ease-out;
+  @keyframes bubble {
+    0%: { 
+      transform: scale(1); 
+      opacity: 1; 
+    }
+    50%: { 
+      transform: scale(1.5); 
+      opacity: 0.6;
+    }
+    100%: { 
+      transform: scale(2); 
+      opacity: 0; 
+    }
+  }
+}
+@font-face{
+  font-family: "Manrope";
+  src: url("./assets/fonts/Manrope-VariableFont_wght.ttf");
+}
+
+/*:root {
+  font-family: "Manrope";
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+*/
