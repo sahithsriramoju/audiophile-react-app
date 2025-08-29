@@ -5,6 +5,7 @@ import { ProductDetails } from './pages/ProductDetails'
 import { Navbar } from './components/Navbar'
 import { appStore } from './redux/appStore'
 import { Provider } from 'react-redux'
+import { Checkout } from './pages/Checkout'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path='/products/:category' element={<ProductsByCategory />} />
         <Route path='/product/:category/:productId' element={<ProductDetails />} />
+        <Route path='/checkout' element={<Checkout/>}/>
       </Routes>
     </Navbar>
     </Provider>
