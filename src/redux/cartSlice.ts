@@ -2,10 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 
-export interface CartItem{
+export class CartItem{
     productId : string;
     quantity : number;
+    /**
+     *
+     */
+    constructor(productId:string, quantity:number) {
+      this.productId = productId;
+      this.quantity = quantity;
+    }
 }
+
 const cartItems: CartItem[] = []
 
 const cartSlice = createSlice({
@@ -15,6 +23,9 @@ const cartSlice = createSlice({
         isCartOpen : false
     },
     reducers :{
+        toggleCart : (state) => {
+            state.isCartOpen = !state.isCartOpen
+        },
         openCart : (state) => {
             state.isCartOpen = true
         },
@@ -46,5 +57,5 @@ const cartSlice = createSlice({
         }
     }
 })
-export const {removeItem, incrementQuantity, decrementQuantity, clearCart, openCart, closeCart} = cartSlice.actions;
+export const {removeItem, incrementQuantity, decrementQuantity, clearCart, openCart, closeCart, toggleCart} = cartSlice.actions;
 export default cartSlice.reducer;
