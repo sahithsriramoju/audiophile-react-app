@@ -1,10 +1,23 @@
 import { useParams, Link } from "react-router";
 import  {productsData} from "../data/mock-products";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ApiClientFactory } from "../components/ApiManager/ApiClientFactory";
 
 export const ProductsByCategory = () => {
     const {category} = useParams();
     const [productsDataState, setProductsDataState] = useState(productsData);
+    const apiClientFactory = new ApiClientFactory("https://audiophile-product-catalog.azurewebsites.net/api");
+    const apiClient = apiClientFactory.createClient();
+
+    const fetchProductsByCategory = async() => {
+        console.time("fetch products by category api call start");
+        const response = await apiClient.get(`/product/category/${category}`);
+        console.timeEnd("fetch products by category api call start");
+        console.log(response);
+    }
+    useEffect(()=>{
+        fetchProductsByCategory();
+    },[]);
     return (
         <>
             
