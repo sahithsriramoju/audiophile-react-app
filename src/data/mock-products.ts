@@ -1,5 +1,6 @@
-export const productsData = {
-    "products": [
+import type { ProductsByCategoryResponse } from "../types/Product";
+
+export const products : ProductsByCategoryResponse = [
       {
         "id": "10ae3070-b907-4b21-83ae-18a97be3ef71",
         "slug": "yx1-earphones",
@@ -123,7 +124,7 @@ export const productsData = {
         "id": "9a345628-6804-44f6-98bc-73229720e5d8",
         "slug": "xx99-mark-one-headphones",
         "name": "XX99 Mark I Headphones",
-        "isNew": false,
+        "new": false,
         "price": 1750,
         "description": "As the gold standard for headphones, the classic XX99 Mark I offers detailed and accurate audio reproduction for audiophiles, mixing engineers, and music aficionados alike in studios and on the go.",
         "quantity": 70,
@@ -174,13 +175,14 @@ export const productsData = {
             "quantity": 1,
             "item": "3.5mm 5m audio cable"
           }
-        ]
+        ],
+        cartImage: null
       },
       {
         "id": "67d6abbdc341e22e3262ac7c",
         "slug": "xx99-mark-two-headphones",
         "name": "XX99 Mark II Headphones",
-        "isNew": true,
+        "new": true,
         "price": 2999,
         "description": "The new XX99 Mark II headphones is the pinnacle of pristine audio. It redefines your premium headphone experience by reproducing the balanced depth and precision of studio-quality sound.",
         "quantity": 59,
@@ -235,13 +237,14 @@ export const productsData = {
             "quantity": 1,
             "item": "Travel bag"
           }
-        ]
+        ],
+        cartImage: null
       },
       {
         "id": "67d6acacc341e22e3262ac7d",
         "slug": "zx7-speaker",
         "name": "ZX7 Speaker",
-        "isNew": false,
+        "new": false,
         "price": 3500,
         "description": "Stream high quality sound wirelessly with minimal to no loss. The ZX7 speaker uses high-end audiophile components that represents the top of the line powered speakers for home or studio use.",
         "quantity": 59,
@@ -296,13 +299,14 @@ export const productsData = {
             "quantity": 1,
             "item": "7.5m optical cable"
           }
-        ]
+        ],
+        cartImage: null
       },
       {
         "id": "67d6ad67c341e22e3262ac7e",
         "slug": "zx9-speaker",
         "name": "ZX9 Speaker",
-        "isNew": true,
+        "new": true,
         "price": 4500,
         "description": "Upgrade your sound system with the all new ZX9 active speaker. It’s a bookshelf speaker system that offers truly wireless connectivity -- creating new possibilities for more pleasing and practical audio setups.",
         "quantity": 59,
@@ -357,7 +361,7 @@ export const productsData = {
             "quantity": 1,
             "item": "10m optical cable"
           }
-        ]
+        ],
+        cartImage: null
       }
     ]
-  }

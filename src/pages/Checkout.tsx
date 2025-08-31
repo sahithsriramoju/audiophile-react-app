@@ -75,7 +75,7 @@ export const Checkout = () => {
                         <AddressComponent heading="Billing Info" type="billingAddress"></AddressComponent>
                         
                         <div className="flex flex-col my-3"> 
-                            <button type="submit" disabled = {methods.formState.isSubmitting} className="grow my-7 text-white text-xs font-bold uppercase text-center py-4 px-8 bg-dark-brown hover:bg-light-brown active:bg-light-brown cursor-pointer">
+                            <button aria-label="Proceed to Payment" type="submit" disabled = {methods.formState.isSubmitting} className="grow my-7 text-white text-xs font-bold uppercase text-center py-4 px-8 bg-dark-brown hover:bg-light-brown active:bg-light-brown cursor-pointer">
                                 Proceed to Payment
                             </button>
                         </div>    

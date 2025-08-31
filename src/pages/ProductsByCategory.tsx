@@ -1,22 +1,27 @@
 import { useParams, Link } from "react-router";
 import  {productsData} from "../data/mock-products";
-import { useEffect, useState } from "react";
-import { ApiClientFactory } from "../components/ApiManager/ApiClientFactory";
+import { useEffect, useRef, useState } from "react";
+import { ApiClientFactory } from "../ApiManager/ApiClientFactory";
+import type { ProductsByCategoryResponse } from "../types/Product";
 
 export const ProductsByCategory = () => {
     const {category} = useParams();
-    const [productsDataState, setProductsDataState] = useState(productsData);
+    const [productsDataState, setProductsDataState] = useState<ProductsByCategoryResponse>(productsData);
+
     const apiClientFactory = new ApiClientFactory("https://audiophile-product-catalog.azurewebsites.net/api");
     const apiClient = apiClientFactory.createClient();
+    const abortControllerRef = useRef<AbortController>(null);
 
-    const fetchProductsByCategory = async() => {
-        console.time("fetch products by category api call start");
-        const response = await apiClient.get(`/product/category/${category}`);
-        console.timeEnd("fetch products by category api call start");
+    const fetchProductsByCategory = async(abortSignal:AbortSignal) => {
+        const response = await apiClient.get<ProductsByCategoryResponse>(`/product/category/${category}`,"",abortSignal);
         console.log(response);
     }
     useEffect(()=>{
-        fetchProductsByCategory();
+        abortControllerRef.current = new AbortController();
+        fetchProductsByCategory(abortControllerRef.current.signal);
+        return () => {
+            abortControllerRef.current?.abort(); 
+        }
     },[]);
     return (
         <>
@@ -32,7 +37,7 @@ export const ProductsByCategory = () => {
                     return (
                         <div key={item?.id} className="flex flex-col mt-10 lg:flex-row lg:mt-40 md:mt-28">
                             <div className={`flex flex-col items-center lg:flex-row lg:mr-16 text-black-1 order-1  ${index%2 != 0 ? 'lg:order-2' : ''}`}>
-                                <img src={item?.imageUrl || ""} aria-label={item?.slug} className="rounded-lg mb-8"></img>
+                                <img alt={item?.name} src={item?.imageUrl || ""} aria-label={item?.slug} className="rounded-lg mb-8"></img>
                             </div>
                             <div className={`flex flex-col items-center lg:justify-center lg:items-start lg:ml-16 order-2 ${index%2 != 0 ? 'lg:order-1' : ''}`}>
                                 {item?.isNew ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}

@@ -17,7 +17,7 @@ export const Cart = () => {
             <div className="bg-white w-full h-fit py-8 px-7 mx-6 mt-32 rounded-lg shadow-sm md:w-auto">
                 <div id="cart-header" className="flex justify-between flex-wrap my-4">
                     <h2 className="text-lg font-bold uppercase">Cart {' ('+cartQuantity+')'}</h2>
-                    <button onClick={()=>dispatch(clearCart())} className="text-content font-medium text-base uppercase">Remove All</button>
+                    <button aria-label="Remove All" onClick={()=>dispatch(clearCart())} className="text-content font-medium text-base uppercase">Remove All</button>
                 </div>
            
                 <div id="cart-items" className="my-4">
