@@ -1,11 +1,11 @@
 import type { ProductsByCategoryResponse } from "../types/Product";
 
-export const products : ProductsByCategoryResponse = [
-      {
+export const productsData : ProductsByCategoryResponse = {
+      "products" : [{
         "id": "10ae3070-b907-4b21-83ae-18a97be3ef71",
         "slug": "yx1-earphones",
         "name": "YX1 Wireless Earphones",
-        "isNew": true,
+        "new": true,
         "price": 599,
         "description": "Tailor your listening experience with bespoke dynamic drivers from the new YX1 Wireless Earphones. Enjoy incredible high-fidelity sound even in noisy environments with its active noise cancellation feature.",
         "quantity": 50,
@@ -67,7 +67,7 @@ export const products : ProductsByCategoryResponse = [
         "id": "68af1178-fbba-47a7-b9d9-cd385573d380",
         "slug": "xx59-headphones",
         "name": "XX59 Headphones",
-        "isNew": true,
+        "new": true,
         "price": 599,
         "description": "Enjoy your audio almost anywhere and customize it to your specific tastes with the XX59 headphones. The stylish yet durable versatile wireless headset is a brilliant companion at home or on the move.",
         "quantity": 70,
@@ -118,7 +118,8 @@ export const products : ProductsByCategoryResponse = [
             "quantity": 1,
             "item": "3.5mm 5m audio cable"
           }
-        ]
+        ],
+        "cartImage": null
       },
       {
         "id": "9a345628-6804-44f6-98bc-73229720e5d8",
@@ -176,7 +177,7 @@ export const products : ProductsByCategoryResponse = [
             "item": "3.5mm 5m audio cable"
           }
         ],
-        cartImage: null
+        "cartImage": null
       },
       {
         "id": "67d6abbdc341e22e3262ac7c",
@@ -238,7 +239,7 @@ export const products : ProductsByCategoryResponse = [
             "item": "Travel bag"
           }
         ],
-        cartImage: null
+        "cartImage": null
       },
       {
         "id": "67d6acacc341e22e3262ac7d",
@@ -300,7 +301,7 @@ export const products : ProductsByCategoryResponse = [
             "item": "7.5m optical cable"
           }
         ],
-        cartImage: null
+        "cartImage": null
       },
       {
         "id": "67d6ad67c341e22e3262ac7e",
@@ -362,6 +363,7 @@ export const products : ProductsByCategoryResponse = [
             "item": "10m optical cable"
           }
         ],
-        cartImage: null
+        "cartImage": null
       }
     ]
+  }

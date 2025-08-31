@@ -6,7 +6,7 @@ import type { ProductsByCategoryResponse } from "../types/Product";
 
 export const ProductsByCategory = () => {
     const {category} = useParams();
-    const [productsDataState, setProductsDataState] = useState<ProductsByCategoryResponse>(productsData);
+    const [productsDataState, setProductsDataState] = useState<ProductsByCategoryResponse>();
 
     const apiClientFactory = new ApiClientFactory("https://audiophile-product-catalog.azurewebsites.net/api");
     const apiClient = apiClientFactory.createClient();
@@ -15,6 +15,7 @@ export const ProductsByCategory = () => {
     const fetchProductsByCategory = async(abortSignal:AbortSignal) => {
         const response = await apiClient.get<ProductsByCategoryResponse>(`/product/category/${category}`,"",abortSignal);
         console.log(response);
+        setProductsDataState(response);
     }
     useEffect(()=>{
         abortControllerRef.current = new AbortController();
@@ -40,7 +41,7 @@ export const ProductsByCategory = () => {
                                 <img alt={item?.name} src={item?.imageUrl || ""} aria-label={item?.slug} className="rounded-lg mb-8"></img>
                             </div>
                             <div className={`flex flex-col items-center lg:justify-center lg:items-start lg:ml-16 order-2 ${index%2 != 0 ? 'lg:order-1' : ''}`}>
-                                {item?.isNew ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}
+                                {item?.new ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}
                                 <h2 className="text-2xl font-extrabold uppercase text-center">{item?.name}</h2>
                                 <p className="text-base font-bold my-4 text-center text-content lg:text-start">{item?.description}</p>
                                 <Link to={"/product/"+item?.category+"/"+item?.slug} className="uppercase py-4 px-7 mt-3 font-bold text-xs text-white bg-dark-brown hover:bg-light-brown">See Product</Link>
