@@ -1,45 +1,53 @@
 import { useParams, Link } from "react-router";
-import  {productsData} from "../data/mock-products";
-import { useEffect, useRef, useState } from "react";
-import { ApiClientFactory } from "../ApiManager/ApiClientFactory";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProductsByCategory, getProducts } from "../redux/productsSlice";
-import type { AppDispatch } from "../redux/appStore";
+//import  {productsData} from "../data/mock-products";
+//import { useEffect, useRef, useState } from "react";
+//import { ApiClientFactory } from "../ApiManager/ApiClientFactory";
+//import { useDispatch } from "react-redux";
+//import { fetchProductsByCategory, getProducts } from "../redux/productsSlice";
+//import type { AppDispatch } from "../redux/appStore";
+import { useGetProductsByCategoryQuery } from "../redux/apiSlice";
 
 export const ProductsByCategory = () => {
-    const products = useSelector(getProducts);
-    const dispatch = useDispatch<AppDispatch>();
+    //const products = useSelector(getProducts);
+    //const dispatch = useDispatch<AppDispatch>();
     
     const {category} = useParams();
+    const {data,
+        isLoading,
+        isSuccess,
+        isError,
+        error
+    } = useGetProductsByCategoryQuery(category!)
     //const [productsDataState, setProductsDataState] = useState<ProductsByCategoryResponse>();
     
     //const apiClientFactory = new ApiClientFactory("https://audiophile-product-catalog.azurewebsites.net/api");
     //const apiClient = apiClientFactory.createClient();
-    const abortControllerRef = useRef<AbortController>(null);
+    //const abortControllerRef = useRef<AbortController>(null);
 
     /*const fetchProductsByCategory = async(abortSignal:AbortSignal) => {
         const response = await apiClient.get<ProductsByCategoryResponse>(`/product/category/${category}`,"",abortSignal);
         console.log(response);
         setProductsDataState(response);
     }*/
-    useEffect(()=>{
+     /*useEffect(()=>{
         //abortControllerRef.current = new AbortController();
-        const promise = dispatch(fetchProductsByCategory(category!));
+       const promise = dispatch(fetchProductsByCategory(category!));
         return () => {
             promise.abort();
            // abortControllerRef.current?.abort()
         }
-    },[]);
+    },[])*/;
+    if(isLoading) return <p>....Loading</p>
     return (
         <>
-            
+        
         <div className="bg-black-1 py-8 px-20">
             <h1 className="uppercase text-2xl text-white font-bold text-center">{category}</h1>
         </div>
         <div id="categoryList" className="flex flex-col px-6 md:px-10 lg:px-36">
             {
                 
-                products?.map((item,index) => {
+                data?.products?.map((item,index) => {
                    
                     return (
                         <div key={item?.id} className="flex flex-col mt-10 lg:flex-row lg:mt-40 md:mt-28">
