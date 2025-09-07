@@ -1,37 +1,40 @@
 import type { AppDispatch, RootState } from "../redux/appStore"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router"
-import { clearCart, closeCart, fetchCart, deleteCart } from "../redux/cartSlice"
+import { clearCart, closeCart, fetchCart, deleteCart, getCart, getCartStatus, getCartOpenStatus } from "../redux/cartSlice"
 import { CartItem } from "./CartItem"
 import { useEffect } from "react"
 import { formatCurrency } from "../utils/formatCurrency"
 import emptyCart from "../assets/images/empty-cart.png";
+import type { Root } from "react-dom/client"
 
 
 export const Cart = () => {
 
-    const cart = useSelector((state:RootState) => state.cart)
+    const cart = useSelector((state:RootState) => getCart(state));
+    const cartStatus = useSelector((state:RootState) => getCartStatus(state));
+    const isCartOpen = useSelector((state:RootState) => getCartOpenStatus(state));
     const dispatch = useDispatch<AppDispatch>();
-    const cartQuantity = cart?.cart?.cart?.items.
+    const cartQuantity = cart?.items.
                          reduce((quantity,item) => quantity + item?.quantity,0);
 
     useEffect(()=>{
-        if(cart?.status === 'idle'){
+        if(cartStatus === 'idle'){
             dispatch(fetchCart());
         }
-        
-    },[cart.status,dispatch]);
+    },[cartStatus,dispatch]);
 
     const handleDeleteCart = () => {
         dispatch(clearCart());
         dispatch(deleteCart());
     }
-    if(cart?.isCartOpen) return null
+    
+    if(!isCartOpen) return null
  
     return(
         <div onClick={()=>dispatch(closeCart())} className="fixed top-0 left-0 w-full h-full bg-background flex justify-end">
              <div className="bg-white w-full h-fit py-8 px-7 mx-6 mt-32 rounded-lg shadow-sm md:w-auto">
-            {cart?.cart?.cart?.items.length === 0 ? 
+            {cart?.items.length === 0 ? 
                     <div className="flex flex-col items-center m-auto justify-between md:w-[300px]">
                         <img src={emptyCart} alt="Empty cart" className="w-1/3 md:w-[80px]"></img>
                         
@@ -51,14 +54,14 @@ export const Cart = () => {
             
                     <div id="cart-items" className="my-4">
                         <ul className="flex flex-col list-none">
-                            {cart?.cart?.cart?.items?.map((item) => (
+                            {cart?.items?.map((item) => (
                                 <CartItem key={item?.productId} {...item}></CartItem>
                             ))}
                         </ul>
                     </div>
                     <div className="flex justify-between">
                         <span>Total:</span>
-                        <span>{formatCurrency(cart?.cart?.cart?.totalPrice)}</span>
+                        <span>{formatCurrency(cart?.totalPrice)}</span>
                     </div>
                     <div className="flex">
                         <Link to="/checkout" className="grow text-white text-xs font-bold uppercase text-center py-4 px-8 bg-dark-brown hover:bg-light-brown">checkout</Link>

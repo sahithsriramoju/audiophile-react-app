@@ -2,17 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { ShoppingCart, ShoppingCartResponseWrapper, ShoppingCartItem } from "../types/Cart";
-import { CartItem } from "../components/CartItem";
-
-export type Cart = {
-    userId: string,
-    cartItems: CartItem[]
-}
-
-export type CartItem = {
-    productId : string;
-    quantity : number;
-}
+import type { RootState } from "./appStore";
 
 const cart: ShoppingCartResponseWrapper = { 
     cart: {
@@ -113,3 +103,8 @@ const cartSlice = createSlice({
 })
 export const {removeItem, incrementQuantity, decrementQuantity, clearCart, openCart, closeCart, toggleCart} = cartSlice.actions;
 export default cartSlice.reducer;
+
+export const getCart = (state:RootState) => state.cart.cart.cart
+export const getCartStatus = (state:RootState) =>  state.cart.status
+export const getCartErrors = (state:RootState) => state.cart.errors
+export const getCartOpenStatus = (state:RootState) => state.cart.isCartOpen
