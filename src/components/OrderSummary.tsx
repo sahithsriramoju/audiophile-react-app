@@ -19,7 +19,7 @@ export const OrderSummary = () => {
     //create an object with product Id, image url, quantity and price
     useEffect(()=>{
       
-        const data:MergedCartItem[] = cart?.cartItems?.map(item=>{
+        const data:MergedCartItem[] = cart?.cart?.cart?.items?.map(item=>{
             const product = productsData?.products?.find(product=>product.id === item.productId);
             if(!product) return null;
             return {

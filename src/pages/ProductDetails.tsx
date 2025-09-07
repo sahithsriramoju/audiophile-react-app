@@ -2,19 +2,41 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { productsData } from "../data/mock-products";
 import { useDispatch, useSelector } from "react-redux";
-import { incrementQuantity } from "../redux/cartSlice";
-import type { RootState } from "../redux/appStore";
+import { incrementQuantity, addOrUpdateCart, openCart } from "../redux/cartSlice";
+import type { AppDispatch, RootState } from "../redux/appStore";
 
 export const ProductDetails = () => {
     const {category,productId} = useParams();
     const [productDetails, setProductDetails] = useState<any>(null);
     const cart = useSelector((state:RootState) => state.cart);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
-    useEffect(()=>{
-        const filteredProduct = productsData?.products?.find(x=>x.slug == productId && x.category == category);
+    const handleAddToCart = () => {
+        dispatch(incrementQuantity({
+            quantity:1, 
+            productId: productDetails?.id, 
+            productName: productDetails?.name, 
+            price: productDetails?.price, 
+            imageUrl: productDetails?.imageUrl
+         }));
+         dispatch(addOrUpdateCart({
+            userId: "1",
+            shoppingCartItem: {
+                productId: productDetails?.id,
+                productName: productDetails?.name,
+                price: productDetails?.price,
+                quantity: 1,
+                imageUrl: productDetails?.imageUrl
+            }
+         }))
+    }
+    useEffect(() => {
+        const filteredProduct = productsData?.products?.find(
+            x => x.slug === productId && x.category === category
+        );
         setProductDetails(filteredProduct);
     }, [category, productId]);
+
     return (
         <div>
            <div className="flex flex-col md:flex-row lg:mt-40">
@@ -28,12 +50,17 @@ export const ProductDetails = () => {
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-2">
                     <span className="text-lg font-bold my-6">{productDetails?.price}</span>
-                    {true? <button aria-label="Add to Cart" className="hover:bg-light-brown bg-amber-700 p-4 cursor-pointer text-white text-xs font-bold uppercase"
-                     onClick={()=>dispatch(incrementQuantity({
-                        quantity:1, productId:productDetails?.id
-                     }))}>
-                    {(cart?.cartItems?.find(x=>x.productId === productDetails?.id)?.quantity ?? 0) == 0 ? "Add to Cart" : "Go to Bag" }</button> : <button aria-label="Out of Stock" disabled className="bg-amber-700 p-4 text-white">Out of Stock</button>}
-                    </div>
+                    {true? 
+                   
+                    (cart?.cart.cart.items?.find(x=>x.productId === productDetails?.id)?.quantity ?? 0) == 0 ? 
+                        <button aria-label="Add to Cart" className="hover:bg-light-brown bg-amber-700 p-4 cursor-pointer text-white text-xs font-bold uppercase"
+                        onClick={()=>handleAddToCart()}>Add to Cart</button> : 
+
+                        <button aria-label="Go to Bag" className="hover:bg-light-brown bg-amber-700 p-4 cursor-pointer text-white text-xs font-bold uppercase"
+                        onClick={()=>dispatch(openCart())}>Go to Bag</button>
+                     :
+                    <button aria-label="Out of Stock" disabled className="bg-amber-700 p-4 text-white">Out of Stock</button>
+                    }</div>
                 </div>
             </div>
             </div>
