@@ -30,7 +30,10 @@ export interface ProductImage {
   }
   
   // Response is an array of products
-  export type ProductsByCategoryResponse = {
+  export interface ProductsByCategoryResponse {
     products: Product[];
+  }
+  export interface ProductByIdResponse  {
+    product : Product;
   }
   

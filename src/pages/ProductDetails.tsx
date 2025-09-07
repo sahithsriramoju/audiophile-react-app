@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { productsData } from "../data/mock-products";
 import { useDispatch, useSelector } from "react-redux";
-import { incrementQuantity, addOrUpdateCart, openCart } from "../redux/cartSlice";
+import { incrementQuantity, addOrUpdateCart, openCart, getCart } from "../redux/cartSlice";
 import type { AppDispatch, RootState } from "../redux/appStore";
+import { getProductById } from "../redux/productsSlice";
 
 export const ProductDetails = () => {
     const {category,productId} = useParams();
     const [productDetails, setProductDetails] = useState<any>(null);
-    const cart = useSelector((state:RootState) => state.cart);
+
+    const cart = useSelector(getCart);
+    const product = useSelector((state:RootState)=>getProductById(state,productId!));
+    console.log(product);
     const dispatch = useDispatch<AppDispatch>();
 
     const handleAddToCart = () => {
@@ -40,19 +44,19 @@ export const ProductDetails = () => {
     return (
         <div>
            <div className="flex flex-col md:flex-row lg:mt-40">
-            <div className="flex flex-col items-start text-black-1 my-16 md:mr-8" key={productDetails?.id}>
-                <img alt={productDetails?.name} src={productDetails?.imageUrl} className="rounded-lg mb-8"></img>
+            <div className="flex flex-col items-start text-black-1 my-16 md:mr-8" key={product?.id}>
+                <img alt={product?.name} src={product?.imageUrl} className="rounded-lg mb-8"></img>
             </div>
             <div className="mt-auto md:my-16 md:ml-8 flex flex-col items-start  md:justify-center">
-                {productDetails?.isNew ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}
-                <h1 className="text-2xl font-extrabold uppercase">{productDetails?.name}</h1>
-                <p className="text-base font-normal my-4 text-content">{productDetails?.description}</p>
+                {product?.new ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}
+                <h1 className="text-2xl font-extrabold uppercase">{product?.name}</h1>
+                <p className="text-base font-normal my-4 text-content">{product?.description}</p>
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-2">
-                    <span className="text-lg font-bold my-6">{productDetails?.price}</span>
+                    <span className="text-lg font-bold my-6">{product?.price}</span>
                     {true? 
                    
-                    (cart?.cart.cart.items?.find(x=>x.productId === productDetails?.id)?.quantity ?? 0) == 0 ? 
+                    (cart?.items?.find(x=>x.productId === product?.id)?.quantity ?? 0) == 0 ? 
                         <button aria-label="Add to Cart" className="hover:bg-light-brown bg-amber-700 p-4 cursor-pointer text-white text-xs font-bold uppercase"
                         onClick={()=>handleAddToCart()}>Add to Cart</button> : 
 

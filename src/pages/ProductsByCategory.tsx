@@ -2,26 +2,32 @@ import { useParams, Link } from "react-router";
 import  {productsData} from "../data/mock-products";
 import { useEffect, useRef, useState } from "react";
 import { ApiClientFactory } from "../ApiManager/ApiClientFactory";
-import type { ProductsByCategoryResponse } from "../types/Product";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductsByCategory, getProducts } from "../redux/productsSlice";
+import type { AppDispatch } from "../redux/appStore";
 
 export const ProductsByCategory = () => {
+    const products = useSelector(getProducts);
+    const dispatch = useDispatch<AppDispatch>();
+    
     const {category} = useParams();
-    const [productsDataState, setProductsDataState] = useState<ProductsByCategoryResponse>();
-
-    const apiClientFactory = new ApiClientFactory("https://audiophile-product-catalog.azurewebsites.net/api");
-    const apiClient = apiClientFactory.createClient();
+    //const [productsDataState, setProductsDataState] = useState<ProductsByCategoryResponse>();
+    
+    //const apiClientFactory = new ApiClientFactory("https://audiophile-product-catalog.azurewebsites.net/api");
+    //const apiClient = apiClientFactory.createClient();
     const abortControllerRef = useRef<AbortController>(null);
 
-    const fetchProductsByCategory = async(abortSignal:AbortSignal) => {
+    /*const fetchProductsByCategory = async(abortSignal:AbortSignal) => {
         const response = await apiClient.get<ProductsByCategoryResponse>(`/product/category/${category}`,"",abortSignal);
         console.log(response);
         setProductsDataState(response);
-    }
+    }*/
     useEffect(()=>{
-        abortControllerRef.current = new AbortController();
-        fetchProductsByCategory(abortControllerRef.current.signal);
+        //abortControllerRef.current = new AbortController();
+        const promise = dispatch(fetchProductsByCategory(category!));
         return () => {
-            abortControllerRef.current?.abort(); 
+            promise.abort();
+           // abortControllerRef.current?.abort()
         }
     },[]);
     return (
@@ -33,7 +39,7 @@ export const ProductsByCategory = () => {
         <div id="categoryList" className="flex flex-col px-6 md:px-10 lg:px-36">
             {
                 
-                productsDataState?.products?.map((item,index) => {
+                products?.map((item,index) => {
                    
                     return (
                         <div key={item?.id} className="flex flex-col mt-10 lg:flex-row lg:mt-40 md:mt-28">
@@ -44,7 +50,7 @@ export const ProductsByCategory = () => {
                                 {item?.new ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}
                                 <h2 className="text-2xl font-extrabold uppercase text-center">{item?.name}</h2>
                                 <p className="text-base font-bold my-4 text-center text-content lg:text-start">{item?.description}</p>
-                                <Link to={"/product/"+item?.category+"/"+item?.slug} className="uppercase py-4 px-7 mt-3 font-bold text-xs text-white bg-dark-brown hover:bg-light-brown">See Product</Link>
+                                <Link to={"/product/"+item?.category+"/"+item?.id} className="uppercase py-4 px-7 mt-3 font-bold text-xs text-white bg-dark-brown hover:bg-light-brown">See Product</Link>
                             </div>
                         </div>
                     )
