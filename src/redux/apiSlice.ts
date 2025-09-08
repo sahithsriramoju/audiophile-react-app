@@ -6,7 +6,10 @@ export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({baseUrl: 'https://audiophile-product-catalog.azurewebsites.net/api'}),
     endpoints: (builder) => ({
         getProductsByCategory : builder.query<ProductsByCategoryResponse,string>({
-            query: (category) => `/product/category/${category}`
+            query: (category) => `/product/category/${category}`,
+            transformResponse: (res:ProductsByCategoryResponse) => ({
+                products: res.products.sort((a,b)=> Number(b.new) - Number(a.new))
+            })
         }),
         getProductById: builder.query<ProductByIdResponse,string>({
             query: (id) => `/product/${id}`
