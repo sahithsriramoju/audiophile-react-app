@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { ShoppingCart, ShoppingCartResponseWrapper, ShoppingCartItem } from "../types/Cart";
@@ -108,3 +108,38 @@ export const getCart = (state:RootState) => state.cart.cart.cart
 export const getCartStatus = (state:RootState) =>  state.cart.status
 export const getCartErrors = (state:RootState) => state.cart.errors
 export const getCartOpenStatus = (state:RootState) => state.cart.isCartOpen
+
+/*
+createSelector prevents unnecessary re-calculations of derived data. 
+It caches the result of the "output selector" function and only 
+re-executes it if the inputs (determined by "input selectors") have changed. 
+This optimizes performance, especially in applications with complex state derivations or 
+frequent updates.
+
+Input Selectors:
+You provide one or more "input selector" functions as the first arguments to createSelector.
+These functions extract specific pieces of data from the Redux store's state.
+
+Output Selector (Result Function):
+The last argument is the "output selector" or "result function." 
+This function receives the results of the input selectors as 
+arguments and performs the actual data transformation or derivation.
+
+Memoization Logic:
+createSelector monitors the return values of the input selectors. 
+If these values remain the same between renders,
+the output selector is not re-run, and the previously cached result is returned.
+
+const selectCartItems = (state:RootState) => state.cart.cart.cart.items
+const selectProductPrices = (state:RootState) => state.products.prices
+
+const selectTotalPrice = createSelector(
+    [selectCartItems, selectItemPrices],
+    (cartItems, itemPrices) => {
+      let total = 0;
+      for (const itemId in cartItems) {
+        total += cartItems[itemId].quantity * itemPrices[itemId];
+      }
+      return total;
+    }
+  );*/

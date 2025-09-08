@@ -1,23 +1,18 @@
 import { useParams, Link } from "react-router";
-//import  {productsData} from "../data/mock-products";
-//import { useEffect, useRef, useState } from "react";
-//import { ApiClientFactory } from "../ApiManager/ApiClientFactory";
-//import { useDispatch } from "react-redux";
-//import { fetchProductsByCategory, getProducts } from "../redux/productsSlice";
-//import type { AppDispatch } from "../redux/appStore";
-import { useGetProductsByCategoryQuery } from "../redux/apiSlice";
+import {  
+    useGetProductsByCategoryQuery 
+} from "../redux/productSlice"
 
 export const ProductsByCategory = () => {
-    //const products = useSelector(getProducts);
-    //const dispatch = useDispatch<AppDispatch>();
-    
     const {category} = useParams();
+   
+   
     const {data,
         isLoading,
         isSuccess,
         isError,
         error
-    } = useGetProductsByCategoryQuery(category!)
+    } = useGetProductsByCategoryQuery(category!);
     //const [productsDataState, setProductsDataState] = useState<ProductsByCategoryResponse>();
     
     //const apiClientFactory = new ApiClientFactory("https://audiophile-product-catalog.azurewebsites.net/api");
@@ -36,8 +31,11 @@ export const ProductsByCategory = () => {
             promise.abort();
            // abortControllerRef.current?.abort()
         }
-    },[])*/;
+    },[]);*/
     if(isLoading) return <p>....Loading</p>
+    else if(isError) return <p>...error in loading products</p>
+    else {
+        const products = data?.ids?.map((id) => data?.entities[id]!).filter(Boolean);
     return (
         <>
         
@@ -47,7 +45,7 @@ export const ProductsByCategory = () => {
         <div id="categoryList" className="flex flex-col px-6 md:px-10 lg:px-36">
             {
                 
-                data?.products?.map((item,index) => {
+                products?.map((item,index) => {
                    
                     return (
                         <div key={item?.id} className="flex flex-col mt-10 lg:flex-row lg:mt-40 md:mt-28">
@@ -69,4 +67,6 @@ export const ProductsByCategory = () => {
     </>
     )
 }
+}
 
+ 
