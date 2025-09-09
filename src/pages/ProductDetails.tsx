@@ -1,49 +1,31 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { productsData } from "../data/mock-products";
 import { useDispatch, useSelector } from "react-redux";
-import { incrementQuantity, addOrUpdateCart, openCart, getCart } from "../redux/cartSlice";
-import type { AppDispatch, RootState } from "../redux/appStore";
-import {  useGetProductByIdQuery, useGetProductsQuery, selectProductById } from "../redux/productSlice";
+import { incrementQuantity, openCart, selectCart, useCreateOrUpdateCartMutation } from "../redux/cartSlice";
+import type { AppDispatch } from "../redux/appStore";
+import {  useGetProductByIdQuery } from "../redux/productSlice";
+import type { Product } from "../types/Product";
+import { selectUser } from "../redux/userSlice";
 
 export const ProductDetails = () => {
     const {category,productId} = useParams();
-    const [productDetails, setProductDetails] = useState<any>(null);
 
-    const cart = useSelector(getCart);
-    const product = useSelector((state:RootState)=>selectProductById(state, productId!))
-    //const product = useSelector((state:RootState)=>getProductById(state,productId!));
-    //console.log(product);
-   const {data,
-        isLoading,
-        isSuccess,
-        isError,
-        error
-    } = useGetProductByIdQuery(productId!)
+    const cart = useSelector(selectCart);
+    const user = useSelector(selectUser);
+   
+    const [createOrUpdateCart, {isLoading}] = useCreateOrUpdateCartMutation();
+    const {data, isLoading:isProductLoading, isError, error} 
+    = useGetProductByIdQuery(productId!)
+    
     const dispatch = useDispatch<AppDispatch>();
 
-    const handleAddToCart = () => {
-        dispatch(incrementQuantity({
-            quantity:1, 
-            productId: productDetails?.id, 
-            productName: productDetails?.name, 
-            price: productDetails?.price, 
-            imageUrl: productDetails?.imageUrl
-         }));
-         dispatch(addOrUpdateCart({
-            userId: "1",
-            shoppingCartItem: {
-                productId: productDetails?.id,
-                productName: productDetails?.name,
-                price: productDetails?.price,
-                quantity: 1,
-                imageUrl: productDetails?.imageUrl
-            }
-         }))
+    const handleAddToCart = (product:Product) => {
+        dispatch(incrementQuantity(product.id,product.name,product.price,1,product.imageUrl))
+        createOrUpdateCart({productId:product.id, productName:product.name, 
+            price:product.price, imageUrl: product.imageUrl, quantity:1})
     }
     
-    if(isLoading) return <p>....Loading</p>
-    else if(isError) return <p>...error in loading products</p>
+    if(isProductLoading) return <p>....Loading</p>
+    else if(isError) return <p>...error in loading products {JSON.stringify(error)}</p>
     else {
         const product = data?.entities[productId!];
     return (
@@ -63,7 +45,7 @@ export const ProductDetails = () => {
                    
                     (cart?.items?.find(x=>x.productId === product?.id)?.quantity ?? 0) == 0 ? 
                         <button aria-label="Add to Cart" className="hover:bg-light-brown bg-amber-700 p-4 cursor-pointer text-white text-xs font-bold uppercase"
-                        onClick={()=>handleAddToCart()}>Add to Cart</button> : 
+                        onClick={()=>handleAddToCart(product!)}>Add to Cart</button> : 
 
                         <button aria-label="Go to Bag" className="hover:bg-light-brown bg-amber-700 p-4 cursor-pointer text-white text-xs font-bold uppercase"
                         onClick={()=>dispatch(openCart())}>Go to Bag</button>
