@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from "react";
 import { Link, NavLink } from "react-router";
-import logo from "../assets/react.svg";
+import logo from "../assets/images/audiophile-logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/appStore";
 import { toggleCart } from "../redux/cartSlice";
 import { Cart } from "./Cart";
+import { AuthTemplate } from "./Auth/AuthTemplate";
 
 type NavbarProps = {
     children : ReactNode
@@ -15,7 +16,7 @@ export const Navbar = ({children}:NavbarProps) => {
     const cart = useSelector((state:RootState) => state.cart);
     const cartItemsCount = cart?.cart?.cart?.items?.reduce((quantity, item) => quantity + item?.quantity, 0);
     const dispatch = useDispatch();
-
+ 
     return(
         <>
         <Cart></Cart>
@@ -46,11 +47,10 @@ export const Navbar = ({children}:NavbarProps) => {
                     <svg className="w-[30px] h-[30px] dark:text-white hover:fill-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                     </svg>
+                    <NavLink to="/profile"></NavLink>
                 </button>
                
-                <button aria-label="Logout" className="mx-6 relative cursor-pointer">
-                    Logout
-                </button>
+                <AuthTemplate/>
                 
                 <button aria-label="cart" className="relative cursor-pointer" onClick={()=>dispatch(toggleCart())}>
                     <svg width="23" height="20" xmlns="http://www.w3.org/2000/svg" className="hover:fill-amber-600"><path d="M8.625 15.833c1.132 0 2.054.935 2.054 2.084 0 1.148-.922 2.083-2.054 2.083-1.132 0-2.054-.935-2.054-2.083 0-1.15.922-2.084 2.054-2.084zm9.857 0c1.132 0 2.054.935 2.054 2.084 0 1.148-.922 2.083-2.054 2.083-1.132 0-2.053-.935-2.053-2.083 0-1.15.92-2.084 2.053-2.084zm-9.857 1.39a.69.69 0 00-.685.694.69.69 0 00.685.694.69.69 0 00.685-.694.69.69 0 00-.685-.695zm9.857 0a.69.69 0 00-.684.694.69.69 0 00.684.694.69.69 0 00.685-.694.69.69 0 00-.685-.695zM4.717 0c.316 0 .59.215.658.517l.481 2.122h16.47a.68.68 0 01.538.262c.127.166.168.38.11.579l-2.695 9.236a.672.672 0 01-.648.478H7.41a.667.667 0 00-.673.66c0 .364.303.66.674.66h12.219c.372 0 .674.295.674.66 0 .364-.302.66-.674.66H7.412c-1.115 0-2.021-.889-2.021-1.98 0-.812.502-1.511 1.218-1.816L4.176 1.32H.674A.667.667 0 010 .66C0 .296.302 0 .674 0zm16.716 3.958H6.156l1.797 7.917h11.17l2.31-7.917z" fill="#FFF" fillRule="nonzero"/></svg>

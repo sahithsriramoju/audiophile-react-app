@@ -8,6 +8,8 @@ import { appStore, persistor } from './redux/appStore'
 import { Provider } from 'react-redux'
 import { Checkout } from './pages/Checkout'
 import { NotFound } from './pages/NotFound'
+import { UserProfile } from './components/Auth/UserProfile'
+import { ProtectedRoute } from './components/Auth/ProtectedRoute'
 
 function App() {
   return (
@@ -17,7 +19,11 @@ function App() {
       <Routes>
        <Route path='/products/:category' element={<ProductsByCategory />} />
         <Route path='/product/:category/:productId' element={<ProductDetails />} />
-        <Route path='/checkout' element={<Checkout/>}/>
+        
+        <Route element={<ProtectedRoute/>}>
+          <Route path='/checkout' element={<Checkout/>}/>
+          <Route path='/profile' element={<UserProfile/>}/>
+        </Route>
         {/*Catch all*/}
         <Route path="*" element={<NotFound/>}/>
       </Routes>
