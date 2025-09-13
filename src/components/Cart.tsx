@@ -20,8 +20,7 @@ export const Cart = () => {
     const totalPrice = useSelector(selectTotalPrice);
     const [deleteCart, {isLoading}] = useDeleteCartMutation();
    
-    const user = useSelector(selectUser);
-    const userAuthenticatedStatus = useSelector(selectUserAuthenticatedStatus)
+
 
     const {data} = useGetCartQuery();
 

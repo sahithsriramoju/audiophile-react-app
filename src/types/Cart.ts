@@ -1,5 +1,6 @@
 export interface ShoppingCart {
-    userId: string,
+    userId: string | null,
+    guestId : string | null,
     shoppingCartItem: ShoppingCartItem
 }
 export interface ShoppingCartItem{
@@ -9,11 +10,15 @@ export interface ShoppingCartItem{
     quantity: number,
     imageUrl: string
 }
+export interface ShoppingCartRequestWrapper {
+    shoppingCartItem : ShoppingCartItem
+}
 export interface ShoppingCartResponseWrapper{
     cart: ShoppingCartResponse
 }
 export interface ShoppingCartResponse{
-    userId: string,
+    userId: string | null,
+    guestId: string | null,
     totalPrice: number,
     items: ShoppingCartItem[]
 }

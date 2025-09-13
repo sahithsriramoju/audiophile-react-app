@@ -1,40 +1,75 @@
-import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-import type { ShoppingCart, ShoppingCartResponseWrapper, ShoppingCartItem } from "../types/Cart";
+import type { ShoppingCart, ShoppingCartResponseWrapper, ShoppingCartItem, ShoppingCartRequestWrapper } from "../types/Cart";
 import type { RootState } from "./appStore";
+import { apiSlice } from "./apiSlice";
 
-const cart: ShoppingCartResponseWrapper = { 
+const baseUrl = `http://localhost:5011/api`;
+const initialCart: ShoppingCartResponseWrapper = {
     cart: {
         userId: '',
+        guestId: '',
         totalPrice: 0,
         items: []
     }
 }
-export const addOrUpdateCart = createAsyncThunk("/api/cart/createCart",async(cart: ShoppingCart) => {
-    const response = await axios.post("https://audiophile-cart-service.azurewebsites.net/api/cart",cart);
-    console.log(response.data);
-    return response.data;
-});
-export const fetchCart = createAsyncThunk("/api/cart/fetchCart", async() => {
-    const response = await axios.get("https://audiophile-cart-service.azurewebsites.net/api/cart/1");
-    console.log(response.data);
-    return response.data;
-});
-export const deleteCart = createAsyncThunk("/api/cart/deleteCart",async() => {
-    const response = await axios.delete("https://audiophile-cart-service.azurewebsites.net/api/cart/1");
-    console.log(response.data);
-    return response.data;
-});
 
+type CartState = {
+    cart: ShoppingCartResponseWrapper,
+    isCartOpen: boolean,
+    status: 'idle' | 'success' | 'failed' | 'pending',
+    error: string | null
+}
+//to make api calls and cache the response
+export const cartApiSlice = apiSlice.injectEndpoints({
+    endpoints: (builder) => ({
+        createOrUpdateCart: builder.mutation<ShoppingCartResponseWrapper, ShoppingCartRequestWrapper>({
+            query: (cart: ShoppingCartRequestWrapper)=>({
+                url: `${baseUrl}/cart`,
+                credentials: 'include',
+                method: 'POST',
+                body: cart
+            }),
+            
+            invalidatesTags: ['Cart']
+        }),
+        getCart: builder.query<ShoppingCartResponseWrapper, void>({
+            query: () => ({
+                url: `${baseUrl}/cart`,
+                credentials: 'include'
+            }),
+            providesTags: ['Cart']
+        }),
+        deleteCart: builder.mutation<void, string>({
+            query: (userId: string) => ({
+                url: `${baseUrl}/cart/${userId}`,
+                credentials: 'include',
+                method: 'DELETE'
+            }),
+            invalidatesTags: ['Cart']
+        }),
+        mergeCart: builder.mutation({
+            query: () => ({
+                url: `${baseUrl}/cart/merge`,
+                credentials: 'include',
+                method: 'POST'
+            }),
+            invalidatesTags: ['Cart']
+        })
+    })
+})
+
+//handles cart operations
+//sync the local state with the api response received from the above defined queries/mutations
 const cartSlice = createSlice({
     name:'cart',
     initialState :{
-        cart : cart,
+        cart : initialCart,
         isCartOpen : false,
-        status: 'idle',
-        errors: [] as string[]
-    },
+        status: 'idle', // 'success' | 'failed' | 'pending'
+        error: null
+    } as CartState,
+    
     reducers :{
         toggleCart : (state) => {
             state.isCartOpen = !state.isCartOpen
@@ -53,12 +88,27 @@ const cartSlice = createSlice({
             if(itemIndex > -1)
                 state.cart.cart.items.splice(itemIndex, 1)
         },
-        incrementQuantity : (state, action: PayloadAction<ShoppingCartItem>) => {
-            const item = state.cart.cart.items.find((x: any)=>x.productId == action.payload.productId);
-            if(item === undefined)
-                state.cart.cart.items.push(action.payload as any)
-            else
-                item.quantity += 1
+        incrementQuantity : {
+            reducer: (state, action: PayloadAction<ShoppingCartItem>) => {
+                const item = state.cart.cart.items.find((x: any)=>x.productId == action.payload.productId);
+                if(item === undefined)
+                    state.cart.cart.items.push({...action.payload, quantity:1} as any)
+                else
+                    item.quantity += 1
+            },
+            prepare(id:string,name:string,price:number,
+                quantity:number,imageUrl:string): { payload: ShoppingCartItem } {
+                return{
+                        payload:
+                        {
+                            productId: id,
+                            productName: name,
+                            price: price,
+                            quantity: quantity,
+                            imageUrl: imageUrl
+                        }
+                    }
+                }
         },
         decrementQuantity : (state, action: PayloadAction<ShoppingCartItem>) => {
             const item = state.cart.cart.items.find((x: ShoppingCartItem)=>x.productId == action.payload.productId);
@@ -70,76 +120,79 @@ const cartSlice = createSlice({
         }
     },
     extraReducers : (builder) =>{
-        builder.addCase(addOrUpdateCart.pending, (state)=>{
-            state.status = 'pending'
-        })
-        builder.addCase(addOrUpdateCart.fulfilled,(state,action:PayloadAction<ShoppingCartResponseWrapper>)=>{
-            state.status = 'successful';
-            state.cart.cart.totalPrice = action.payload.cart.totalPrice;
-        })
-        builder.addCase(addOrUpdateCart.rejected,(state, action)=>{
-            state.status = 'failed'
-            state.errors = action.error?.message ? [action.error.message] : ['Unknown error']
-        })
-        builder.addCase(fetchCart.fulfilled,(state,action:PayloadAction<ShoppingCartResponseWrapper>)=>{
-            state.cart.cart = action.payload.cart;
-            state.status = 'successful';
-        })
-        builder.addCase(fetchCart.pending,(state)=>{
-            state.status = 'pending';
-        })
-        builder.addCase(fetchCart.rejected,(state,action)=>{
-            state.status = 'failed'
-            state.errors = action.error?.message ? [action.error.message] : ['Unknown error']
-        })
-        builder.addCase(deleteCart.fulfilled,(state,action) => {
-            state.cart = cart
-        })
-        builder.addCase(deleteCart.rejected, (state,action) =>{
-            state.errors = action.error?.message ? [action.error.message] : ['Unknown error']
-        })
+        builder.addMatcher(
+            cartApiSlice.endpoints.createOrUpdateCart.matchPending,
+            (state) => {
+                state.status = 'pending'
+            }
+        )
+        builder.addMatcher(
+            cartApiSlice.endpoints.createOrUpdateCart.matchFulfilled,
+            (state, action: PayloadAction<ShoppingCartResponseWrapper>) => {
+                state.status = 'success'
+                state.cart.cart = action.payload.cart
+            }
+        )
+        builder.addMatcher(
+            cartApiSlice.endpoints.createOrUpdateCart.matchRejected,
+            (state, action) => {
+                state.status = 'failed'
+                state.error = action.error?.message ? action.error.message : 'Unknown error'
+            }
+        )
 
+        builder.addMatcher(
+            cartApiSlice.endpoints.getCart.matchPending,
+            (state) => {
+                state.status = 'pending'
+            }
+        )
+        builder.addMatcher(
+            cartApiSlice.endpoints.getCart.matchFulfilled,
+            (state, action: PayloadAction<ShoppingCartResponseWrapper>) => {
+                state.cart.cart = action.payload.cart
+                state.status = 'success'
+            }
+        )
+        builder.addMatcher(
+            cartApiSlice.endpoints.getCart.matchRejected,
+            (state, action) => {
+                state.status = 'failed'
+                state.error = action.error?.message ? action.error.message : 'Unknown error'
+            }
+        )
+
+        builder.addMatcher(
+            cartApiSlice.endpoints.deleteCart.matchFulfilled,
+            (state) => {
+                state.cart = initialCart
+            }
+        )
+        builder.addMatcher(
+            cartApiSlice.endpoints.deleteCart.matchRejected,
+            (state, action) => {
+                state.error = action.error?.message ? action.error.message : 'Unknown error'
+            }
+        )
     }
 })
 export const {removeItem, incrementQuantity, decrementQuantity, clearCart, openCart, closeCart, toggleCart} = cartSlice.actions;
 export default cartSlice.reducer;
 
-export const getCart = (state:RootState) => state.cart.cart.cart
-export const getCartStatus = (state:RootState) =>  state.cart.status
-export const getCartErrors = (state:RootState) => state.cart.errors
-export const getCartOpenStatus = (state:RootState) => state.cart.isCartOpen
+export const { useCreateOrUpdateCartMutation, useGetCartQuery, useDeleteCartMutation, useMergeCartMutation } = cartApiSlice;
 
-/*
-createSelector prevents unnecessary re-calculations of derived data. 
-It caches the result of the "output selector" function and only 
-re-executes it if the inputs (determined by "input selectors") have changed. 
-This optimizes performance, especially in applications with complex state derivations or 
-frequent updates.
+export const selectCart = (state:RootState) => state.cart.cart.cart
+export const selectCartStatus = (state:RootState) =>  state.cart.status
+export const selctCartError = (state:RootState) => state.cart.error
+export const selectCartOpenStatus = (state:RootState) => state.cart.isCartOpen
+export const selectCartItems = (state:RootState) => state.cart.cart.cart.items
 
-Input Selectors:
-You provide one or more "input selector" functions as the first arguments to createSelector.
-These functions extract specific pieces of data from the Redux store's state.
+export const selectTotalPrice = createSelector(
+    selectCartItems,
+    (cartItems: ShoppingCartItem[]) => cartItems.reduce((totalPrice: number, cartItem: ShoppingCartItem) => totalPrice + cartItem.price * cartItem.quantity,0)
+)
+export const selectCartQuantity = createSelector(
+    selectCartItems,
+    (cartItems: ShoppingCartItem[]) => cartItems.reduce((totalQuantity: number, cartItem: ShoppingCartItem)=> totalQuantity + cartItem.quantity,0)
+)
 
-Output Selector (Result Function):
-The last argument is the "output selector" or "result function." 
-This function receives the results of the input selectors as 
-arguments and performs the actual data transformation or derivation.
-
-Memoization Logic:
-createSelector monitors the return values of the input selectors. 
-If these values remain the same between renders,
-the output selector is not re-run, and the previously cached result is returned.
-
-const selectCartItems = (state:RootState) => state.cart.cart.cart.items
-const selectProductPrices = (state:RootState) => state.products.prices
-
-const selectTotalPrice = createSelector(
-    [selectCartItems, selectItemPrices],
-    (cartItems, itemPrices) => {
-      let total = 0;
-      for (const itemId in cartItems) {
-        total += cartItems[itemId].quantity * itemPrices[itemId];
-      }
-      return total;
-    }
-  );*/

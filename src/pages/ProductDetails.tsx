@@ -20,8 +20,8 @@ export const ProductDetails = () => {
 
     const handleAddToCart = (product:Product) => {
         dispatch(incrementQuantity(product.id,product.name,product.price,1,product.imageUrl))
-        createOrUpdateCart({productId:product.id, productName:product.name, 
-            price:product.price, imageUrl: product.imageUrl, quantity:1})
+        createOrUpdateCart({shoppingCartItem : {productId:product.id, productName:product.name, 
+            price:product.price, imageUrl: product.imageUrl, quantity:1}})
     }
     
     if(isProductLoading) return <p>....Loading</p>
