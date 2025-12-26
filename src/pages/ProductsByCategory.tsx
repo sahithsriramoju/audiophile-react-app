@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router";
 import {  
     useGetProductsByCategoryQuery 
 } from "../redux/productSlice"
+import { ProductThumbnailImage } from "../components/Product/ProductThumbnailImage";
 
 export const ProductsByCategory = () => {
     const {category} = useParams();
@@ -50,7 +51,8 @@ export const ProductsByCategory = () => {
                     return (
                         <div key={item?.id} className="flex flex-col mt-10 lg:flex-row lg:mt-40 md:mt-28">
                             <div className={`flex flex-col items-center lg:flex-row lg:mr-16 text-black-1 order-1  ${index%2 != 0 ? 'lg:order-2' : ''}`}>
-                                <img alt={item?.name} src={item?.imageUrl || ""} aria-label={item?.slug} className="rounded-lg mb-8"></img>
+                                {/* <img alt={item?.name} src={item?.imageUrl || ""} aria-label={item?.slug} className="rounded-lg mb-8"></img> */}
+                                <ProductThumbnailImage images={item?.images || []} name={item?.name || ""} />
                             </div>
                             <div className={`flex flex-col items-center lg:justify-center lg:items-start lg:ml-16 order-2 ${index%2 != 0 ? 'lg:order-1' : ''}`}>
                                 {item?.new ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}

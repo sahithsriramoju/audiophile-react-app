@@ -67,3 +67,38 @@ export default tseslint.config([
   },
 ])
 ```
+#My solution:
+✅ 1. I store the guest’s cart locally using Zustand with persistence.
+ ✅ 2. On login or signup, I merge their local cart with their database cart using:
+await mergeLocalCartWithDB();
+✅ 3. I use useUserStore.subscribe to detect when a user logs in, then automatically load their cart and wishlist from the database to the app state.
+✅ 4. Finally, I clear the local cart state to avoid duplication.
+✨ Why this matters:
+🔹 Users never lose their products.
+ 🔹 Seamless guest-to-user transition.
+ 🔹 Encourages checkout and increases conversion rates.
+👨‍💻 Here’s a quick snippet:
+useUserStore.subscribe((state) => state.user, (user) => {
+ if (user) {
+ void Promise.all([loadCart(), loadWishlist()]);
+ } else {
+ void logOutUser();
+ }
+});My solution:
+✅ 1. I store the guest’s cart locally using Zustand with persistence.
+ ✅ 2. On login or signup, I merge their local cart with their database cart using:
+await mergeLocalCartWithDB();
+✅ 3. I use useUserStore.subscribe to detect when a user logs in, then automatically load their cart and wishlist from the database to the app state.
+✅ 4. Finally, I clear the local cart state to avoid duplication.
+✨ Why this matters:
+🔹 Users never lose their products.
+ 🔹 Seamless guest-to-user transition.
+ 🔹 Encourages checkout and increases conversion rates.
+👨‍💻 Here’s a quick snippet:
+useUserStore.subscribe((state) => state.user, (user) => {
+ if (user) {
+ void Promise.all([loadCart(), loadWishlist()]);
+ } else {
+ void logOutUser();
+ }
+});

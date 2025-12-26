@@ -1,10 +1,14 @@
 export interface ProductImage {
-    desktop: string;
-    tablet: string;
-    mobile: string;
+    imageType: string;
+    cloudinaryPublicId: string;
+    cloudinaryVersion: string;
   }
   
-  export interface GalleryImage extends ProductImage {}
+  export interface GalleryImage{
+    position: number;
+    cloudinaryPublicId: string;
+    cloudinaryVersion: string;
+  }
   
   export interface IncludedItem {
     quantity: number;
@@ -21,10 +25,7 @@ export interface ProductImage {
     quantity: number;
     features: string;
     category: string;
-    cartImage: string | null;
-    imageUrl: string;
-    image: ProductImage;
-    categoryImage: ProductImage;
+    images: ProductImage[];
     gallery: GalleryImage[];
     includedItems: IncludedItem[];
   }

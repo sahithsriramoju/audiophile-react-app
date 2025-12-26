@@ -9,25 +9,27 @@ export const productAdapter = createEntityAdapter<Product>({
 })
 const initialState = productAdapter.getInitialState();
 
+const baseUrl = 'https://5knxxwtr4uuyopt3cltdbcjgzu0iheff.lambda-url.ap-southeast-2.on.aws/api';
 export const productSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getProducts: builder.query<EntityState<Product,string>,void>({
-            query:()=>`/products`,
+            query:()=>`${baseUrl}/products`,
             transformResponse: (res:ProductsByCategoryResponse) => {
                 return productAdapter.setAll(initialState,res.products);
             }
         }),
         getProductsByCategory : builder.query<EntityState<Product, string>,string>({
-            query : (category) => `/product/category/${category}`,
+            query : (category) => `${baseUrl}/products/category/${category}`,
             transformResponse: (res:ProductsByCategoryResponse) => {
                return productAdapter.setAll(initialState,res.products);
             },
         }),
         getProductById: builder.query<EntityState<Product,string>,string>({
-            query: (productId) => `/product/${productId}`,
+            query: (productId) => `${baseUrl}/products/${productId}`,
+            providesTags: (result) => [{ type: 'Product' as const, id: 'LIST' },...result?.ids.map((id) => ({ type: 'Product' as const, id })) ?? [],],
             transformResponse: (res:ProductByIdResponse) =>{
                 return productAdapter.setOne(initialState,res.product)
-            }
+            },
         })
     })
 })
@@ -37,7 +39,8 @@ export const productSlice = apiSlice.injectEndpoints({
 export const {
     useGetProductsQuery,
     useGetProductsByCategoryQuery,
-    useGetProductByIdQuery
+    useGetProductByIdQuery,
+    useLazyGetProductByIdQuery
 } = productSlice
 
 //creates and exports a custom selector function for RTK Query. 

@@ -4,7 +4,7 @@ import type { ShoppingCart, ShoppingCartResponseWrapper, ShoppingCartItem, Shopp
 import type { RootState } from "./appStore";
 import { apiSlice } from "./apiSlice";
 
-const baseUrl = `http://localhost:5011/api`;
+const baseUrl = `https://7baqhomirwx2xzjhzj6ydw3uee0kplsj.lambda-url.ap-southeast-2.on.aws/api`;
 const initialCart: ShoppingCartResponseWrapper = {
     cart: {
         userId: '',
@@ -37,6 +37,12 @@ export const cartApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: `${baseUrl}/cart`,
                 credentials: 'include'
+            }),
+            providesTags: ['Cart']
+        }),
+        getCartByUserId: builder.query<ShoppingCartResponseWrapper, string>({
+            query: (userId: string) => ({
+                url: `${baseUrl}/cart/${userId}`,
             }),
             providesTags: ['Cart']
         }),
@@ -179,11 +185,12 @@ const cartSlice = createSlice({
 export const {removeItem, incrementQuantity, decrementQuantity, clearCart, openCart, closeCart, toggleCart} = cartSlice.actions;
 export default cartSlice.reducer;
 
-export const { useCreateOrUpdateCartMutation, useGetCartQuery, useDeleteCartMutation, useMergeCartMutation } = cartApiSlice;
+export const { useCreateOrUpdateCartMutation, useGetCartQuery, useDeleteCartMutation,
+     useMergeCartMutation, useGetCartByUserIdQuery } = cartApiSlice;
 
 export const selectCart = (state:RootState) => state.cart.cart.cart
 export const selectCartStatus = (state:RootState) =>  state.cart.status
-export const selctCartError = (state:RootState) => state.cart.error
+export const selectCartError = (state:RootState) => state.cart.error
 export const selectCartOpenStatus = (state:RootState) => state.cart.isCartOpen
 export const selectCartItems = (state:RootState) => state.cart.cart.cart.items
 
