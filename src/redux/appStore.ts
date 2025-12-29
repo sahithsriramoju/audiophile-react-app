@@ -1,6 +1,7 @@
 import {configureStore, createListenerMiddleware}  from "@reduxjs/toolkit";
 import cartReducer, { cartApiSlice }  from "../redux/cartSlice";
 import userReducer, { login } from "../redux/userSlice";
+import authReducer from "../redux/authSlice";
 import { apiSlice } from "./apiSlice";
 import storage from "redux-persist/lib/storage";
 import {persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from "redux-persist";
@@ -35,6 +36,7 @@ export const appStore = configureStore({
     reducer : {
         cart : persistedCartReducer,
         user: userReducer,
+        auth: authReducer,
         [apiSlice.reducerPath]: apiSlice.reducer,
     },
     middleware : (getDefaultMiddleware) =>

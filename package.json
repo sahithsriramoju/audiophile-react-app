@@ -10,11 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@azure/msal-browser": "^4.22.1",
-    "@azure/msal-react": "^3.0.19",
     "@hookform/resolvers": "^5.2.1",
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/vite": "^4.1.12",
+    "aws-amplify": "^6.15.9",
     "axios": "^1.11.0",
     "js-cookie": "^3.0.5",
     "react": "^19.1.1",

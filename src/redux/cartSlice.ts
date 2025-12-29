@@ -4,7 +4,7 @@ import type { ShoppingCart, ShoppingCartResponseWrapper, ShoppingCartItem, Shopp
 import type { RootState } from "./appStore";
 import { apiSlice } from "./apiSlice";
 
-const baseUrl = `https://7baqhomirwx2xzjhzj6ydw3uee0kplsj.lambda-url.ap-southeast-2.on.aws/api`;
+const baseUrl = import.meta.env.VITE_CART_API_BASE_URL;
 const initialCart: ShoppingCartResponseWrapper = {
     cart: {
         userId: '',

@@ -9,7 +9,7 @@ export const productAdapter = createEntityAdapter<Product>({
 })
 const initialState = productAdapter.getInitialState();
 
-const baseUrl = 'https://5knxxwtr4uuyopt3cltdbcjgzu0iheff.lambda-url.ap-southeast-2.on.aws/api';
+const baseUrl = import.meta.env.VITE_PRODUCT_API_BASE_URL;
 export const productSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getProducts: builder.query<EntityState<Product,string>,void>({
