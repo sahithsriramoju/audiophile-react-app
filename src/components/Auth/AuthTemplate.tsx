@@ -1,28 +1,23 @@
-import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
-import { loginRequest } from "./authConfig";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../redux/authSlice";
+import {  useNavigate } from "react-router";
 
 export const AuthTemplate = () => {
-    const { instance } = useMsal();
-    const handleLoginRedirect = () => {
-        instance.loginRedirect(loginRequest).catch((error) => console.error(error));
+  const auth = useSelector(selectAuth);
+  const navigate = useNavigate();
+  
+  const handleUserIconClick = () => {
+    if(auth.isAuthenticated){
+      navigate("/dashboard");
     }
-    const handleLogoutRedirect = () => {
-        instance.logoutRedirect().catch((error) => console.error(error));
-    }
-    return (
-        <div className="mx-6 relative cursor-pointer">
-            <AuthenticatedTemplate>
-                    <div>
-                        <button aria-label="Logout" onClick={handleLogoutRedirect}>
-                            Sign out
-                        </button>
-                    </div>
-                </AuthenticatedTemplate>
-                <UnauthenticatedTemplate>
-                    <div>
-                        <button aria-label="Login" onClick={handleLoginRedirect}>Sign in</button>
-                    </div>
-                </UnauthenticatedTemplate>
-        </div>
-    )
+    navigate("/login");
+  }
+  
+  return (
+    <button aria-label="Profile" className="mx-6 relative cursor-pointer" onClick={handleUserIconClick}>
+        <svg className="w-[30px] h-[30px] dark:text-white hover:fill-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+        </svg>
+    </button>
+  )
 }
