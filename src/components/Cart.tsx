@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router"
 import { clearCart, closeCart, selectCartQuantity, selectTotalPrice, selectCart, selectCartStatus, selectCartOpenStatus, useDeleteCartMutation, useGetCartQuery } from "../redux/cartSlice"
 import { CartItem } from "./CartItem"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { formatCurrency } from "../utils/formatCurrency"
 import { EmptyCart } from "./EmptyCart"
 import { selectUser, selectUserAuthenticatedStatus } from "../redux/userSlice"
@@ -19,9 +19,6 @@ export const Cart = () => {
     const totalQuantity = useSelector(selectCartQuantity);
     const totalPrice = useSelector(selectTotalPrice);
     const [deleteCart, {isLoading}] = useDeleteCartMutation();
-   
-
-
     const {data} = useGetCartQuery();
 
     const handleDeleteCart = () => {
@@ -30,12 +27,48 @@ export const Cart = () => {
     }
     const handleCloseCart = () => dispatch(closeCart())
     
+    const cartRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (isCartOpen) {
+           const cartModal = cartRef.current;
+           const focusableElements = cartModal?.querySelectorAll<HTMLElement>(
+               'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+           );
+           const firstElement = focusableElements ? focusableElements[0] : null;
+           const lastElement = focusableElements ? focusableElements[focusableElements.length - 1] : null;
+           const handleTabKeyPress = (e: KeyboardEvent) => { 
+            if (e.key === 'Tab') {
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement?.focus();
+                }
+                else if (!e.shiftKey && document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement?.focus();
+                }
+           }
+        };
+        const handleEscapeKeyPress = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+             handleCloseCart();
+            }
+        };
+        cartModal?.addEventListener('keydown', handleTabKeyPress);
+        cartModal?.addEventListener('keydown', handleEscapeKeyPress);
+        
+        return () => {
+            cartModal?.removeEventListener('keydown', handleTabKeyPress);
+            cartModal?.removeEventListener('keydown', handleEscapeKeyPress);
+        }
+    }
+    }, [isCartOpen]);
     
     if(!isCartOpen) return null
  
     return(
         <div onClick={handleCloseCart} className="fixed top-0 left-0 w-full h-full bg-background flex justify-end">
-             <div className="bg-white w-full h-fit py-8 px-7 mx-6 mt-32 rounded-lg shadow-sm md:w-auto">
+             <div tabIndex={-1} role="dialog" aria-modal="true"
+             className="bg-white w-full h-fit py-8 px-7 mx-6 mt-32 rounded-lg shadow-sm md:w-auto">
             {totalQuantity === 0 ? 
                     <EmptyCart onCloseCart={handleCloseCart}></EmptyCart>
             :

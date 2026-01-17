@@ -58,7 +58,9 @@ export const ProductsByCategory = () => {
                                 {item?.new ? <span className="text-sm text-dark-brown uppercase font-normal mb-6">New Product</span>: ""}
                                 <h2 className="text-2xl font-extrabold uppercase text-center">{item?.name}</h2>
                                 <p className="text-base font-bold my-4 text-center text-content lg:text-start">{item?.description}</p>
-                                <Link to={"/product/"+item?.category+"/"+item?.id} className="uppercase py-4 px-7 mt-3 font-bold text-xs text-white bg-dark-brown hover:bg-light-brown">See Product</Link>
+                                <Link to={"/product/"+item?.category+"/"+item?.id} 
+                                aria-label={`See ${item?.name} product details`}
+                                className="uppercase py-4 px-7 mt-3 font-bold text-xs text-white bg-dark-brown hover:bg-light-brown">See Product</Link>
                             </div>
                         </div>
                     )
