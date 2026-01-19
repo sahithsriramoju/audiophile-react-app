@@ -55,7 +55,7 @@ The codebase is organized for scalability and maintainability:
 
 ## 📸 Screenshots
 
-> _Add screenshots or a demo GIF here to visually showcase the UI and features._
+> ![alt text](image.png)
 
 ## 📝 Getting Started
 
